@@ -1,0 +1,1178 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Road Quality Assessment — Final Presentation</title>
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&family=Geist:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    /* palette — dark */
+    --bg:        #141410;
+    --bg-2:     #1C1B16;
+    --bg-card:  #1C1B16;
+    --bg-dark:  #0E0E0B;
+    --ink:      #F2EFE5;
+    --ink-2:    #D8D4C5;
+    --muted:    #8E897B;
+    --hair:     #2F2E27;
+    --hair-2:   #24231D;
+    --accent:   #8FB89C;   /* sage green (Good) */
+    --warm:     #D88159;   /* warm terracotta (Bad / highlights) */
+    --gold:     #D4A65A;   /* amber (Fair / data) */
+    --blue:     #7DA0C4;   /* slate blue */
+
+    /* type scale (1920×1080) */
+    --type-eyebrow: 24px;
+    --type-title:   64px;
+    --type-display: 116px;
+    --type-subtitle:44px;
+    --type-body:    30px;
+    --type-small:   26px;
+    --type-tiny:    24px;
+    --type-mono:    24px;
+
+    /* spacing */
+    --pad-x: 110px;
+    --pad-top: 92px;
+    --pad-bottom: 80px;
+    --gap-title: 44px;
+    --gap-item: 24px;
+
+    /* fonts */
+    --f-serif: "Newsreader", Georgia, serif;
+    --f-sans:  "Geist", "Inter Tight", system-ui, sans-serif;
+    --f-mono:  "JetBrains Mono", ui-monospace, monospace;
+  }
+
+  html, body { background: #000; margin: 0; }
+  deck-stage { font-family: var(--f-sans); color: var(--ink); }
+
+  section {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--f-sans);
+    font-weight: 400;
+    overflow: hidden;
+    box-sizing: border-box;
+  }
+
+  ::selection { background: var(--warm); color: var(--bg); }
+
+  /* ---------- chrome / running header ---------- */
+  .chrome-top {
+    position: absolute; top: 44px; left: var(--pad-x); right: var(--pad-x);
+    display: flex; justify-content: space-between; align-items: center;
+    font-family: var(--f-mono);
+    font-size: var(--type-tiny);
+    color: var(--muted);
+    letter-spacing: 0.04em;
+  }
+  .chrome-bot {
+    position: absolute; bottom: 44px; left: var(--pad-x); right: var(--pad-x);
+    display: flex; justify-content: space-between; align-items: baseline;
+    font-family: var(--f-mono);
+    font-size: var(--type-tiny);
+    color: var(--muted);
+    letter-spacing: 0.04em;
+  }
+  .chrome-bot .who { color: var(--ink); }
+  .chrome-bot strong { font-weight: 500; color: var(--ink); }
+
+  .eyebrow {
+    font-family: var(--f-mono);
+    font-size: var(--type-eyebrow);
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .eyebrow .dot { color: var(--warm); }
+
+  h1, h2, h3, h4, p { margin: 0; }
+
+  .h-display {
+    font-family: var(--f-serif);
+    font-weight: 400;
+    font-size: var(--type-display);
+    line-height: 0.95;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+  }
+  .h-title {
+    font-family: var(--f-serif);
+    font-weight: 400;
+    font-size: var(--type-title);
+    line-height: 1.04;
+    letter-spacing: -0.015em;
+    color: var(--ink);
+  }
+  .h-sub {
+    font-family: var(--f-sans);
+    font-weight: 400;
+    font-size: var(--type-subtitle);
+    line-height: 1.15;
+    letter-spacing: -0.01em;
+  }
+  .body {
+    font-family: var(--f-sans);
+    font-weight: 400;
+    font-size: var(--type-body);
+    line-height: 1.35;
+    color: var(--ink-2);
+  }
+  .small {
+    font-size: var(--type-small);
+    line-height: 1.35;
+    color: var(--ink-2);
+  }
+  .tiny { font-size: var(--type-tiny); line-height: 1.3; color: var(--muted); }
+  .mono { font-family: var(--f-mono); }
+
+  .rule { height: 1px; background: var(--hair); width: 100%; }
+  .rule-strong { height: 1px; background: var(--ink); width: 100%; }
+  .h-display, .h-title, .h-sub { color: var(--ink); }
+
+  /* ---------- slide frame ---------- */
+  .frame {
+    position: absolute; inset: 0;
+    padding: var(--pad-top) var(--pad-x) var(--pad-bottom);
+    display: flex; flex-direction: column;
+  }
+
+  .title-row {
+    display: flex; flex-direction: column; gap: 14px;
+    margin-top: 28px; margin-bottom: var(--gap-title);
+  }
+
+  /* utility */
+  .row { display: flex; }
+  .col { display: flex; flex-direction: column; }
+  .gap-s { gap: 14px; }
+  .gap-m { gap: 28px; }
+  .gap-l { gap: 48px; }
+  .gap-xl { gap: 72px; }
+  .grow { flex: 1; min-height: 0; }
+  .center { align-items: center; justify-content: center; }
+  .between { justify-content: space-between; }
+
+  /* numbered bullet */
+  .num {
+    font-family: var(--f-mono);
+    color: var(--warm);
+    font-size: var(--type-small);
+    letter-spacing: 0.02em;
+  }
+
+  /* ---------- COVER ---------- */
+  .cover { background: var(--bg); }
+  .cover .ink-block {
+    display: flex; align-items: flex-end; gap: 40px;
+  }
+  .cover .meta-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 60px; margin-top: 64px;
+    border-top: 1px solid var(--hair); padding-top: 32px;
+  }
+  .meta-grid .lbl { color: var(--muted); font-family: var(--f-mono); font-size: var(--type-tiny); letter-spacing: 0.18em; text-transform: uppercase; margin-bottom: 8px; }
+  .meta-grid .val { font-family: var(--f-serif); font-size: 34px; color: var(--ink); line-height: 1.2; }
+  .meta-grid .val .sub { display: block; font-family: var(--f-sans); font-size: var(--type-small); color: var(--muted); margin-top: 4px; }
+
+  .cover-aside {
+    position: absolute; top: var(--pad-top); right: var(--pad-x);
+    width: 360px;
+    border-left: 1px solid var(--hair);
+    padding-left: 28px;
+  }
+
+  /* ---------- pipeline ---------- */
+  .pipe {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 18px;
+  }
+  .pipe .step {
+    border: 1px solid var(--hair);
+    background: var(--bg-card);
+    padding: 22px 22px 26px;
+    display: flex; flex-direction: column;
+    gap: 14px;
+    position: relative;
+  }
+  .pipe .step .n {
+    font-family: var(--f-mono); color: var(--warm);
+    font-size: var(--type-small);
+  }
+  .pipe .step .name {
+    font-family: var(--f-serif);
+    font-size: 30px;
+    line-height: 1.1;
+    letter-spacing: -0.01em;
+  }
+  .pipe .step .desc {
+    font-size: var(--type-small);
+    color: var(--muted);
+    line-height: 1.3;
+  }
+  .pipe .step .stat {
+    font-family: var(--f-mono);
+    font-size: var(--type-small);
+    color: var(--ink);
+    border-top: 1px dashed var(--hair);
+    padding-top: 10px;
+    margin-top: auto;
+  }
+  .arrow {
+    position: absolute;
+    right: -14px; top: 50%; transform: translateY(-50%);
+    color: var(--muted);
+    font-family: var(--f-mono);
+    font-size: 24px;
+    z-index: 2;
+  }
+
+  /* tables */
+  table.data {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: var(--f-mono);
+    font-size: var(--type-small);
+  }
+  table.data th, table.data td {
+    text-align: left;
+    padding: 9px 18px;
+    border-bottom: 1px solid var(--hair);
+    color: var(--ink-2);
+  }
+  table.data th {
+    color: var(--muted);
+    font-weight: 500;
+    font-size: var(--type-tiny);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    border-bottom: 1px solid var(--ink);
+  }
+  table.data td.num-cell { font-variant-numeric: tabular-nums; }
+  table.data tr.hl td { background: rgba(216, 129, 89, 0.10); color: var(--ink); font-weight: 500; }
+  table.data tr.hl td:first-child { color: var(--warm); font-weight: 600; }
+
+  /* big stat */
+  .stat-big {
+    display: flex; flex-direction: column; gap: 6px;
+  }
+  .stat-big .v {
+    font-family: var(--f-serif);
+    font-size: 130px;
+    line-height: 0.9;
+    letter-spacing: -0.03em;
+    color: var(--ink);
+  }
+  .stat-big .l {
+    font-family: var(--f-mono);
+    font-size: var(--type-small);
+    color: var(--muted);
+    letter-spacing: 0.1em; text-transform: uppercase;
+  }
+
+  /* card */
+  .card {
+    border: 1px solid var(--hair);
+    background: var(--bg-card);
+    padding: 30px 30px 32px;
+    display: flex; flex-direction: column;
+    gap: 14px;
+  }
+  .card .k {
+    font-family: var(--f-mono);
+    color: var(--muted);
+    font-size: var(--type-tiny);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+  .card .h {
+    font-family: var(--f-serif);
+    font-size: 36px;
+    line-height: 1.1;
+    letter-spacing: -0.01em;
+  }
+  .card .b {
+    font-size: var(--type-small);
+    color: var(--ink-2);
+    line-height: 1.35;
+  }
+
+  /* bar viz */
+  .bar-row { display: grid; grid-template-columns: 220px 1fr 110px; gap: 18px; align-items: center; }
+  .bar-row .lbl { font-family: var(--f-mono); font-size: var(--type-small); color: var(--ink); }
+  .bar-row .lbl.hl { color: var(--warm); font-weight: 600; }
+  .bar-track { height: 24px; background: var(--hair-2); position: relative; }
+  .bar-fill { height: 100%; background: var(--warm); }
+  .bar-fill.accent { background: var(--accent); }
+  .bar-fill.warm { background: var(--warm); }
+  .bar-row .v { font-family: var(--f-mono); font-size: var(--type-small); color: var(--ink); text-align: right; font-variant-numeric: tabular-nums; }
+
+  /* class badge */
+  .badge {
+    font-family: var(--f-mono);
+    font-size: var(--type-tiny);
+    padding: 4px 10px;
+    border: 1px solid currentColor;
+    display: inline-flex; align-items: center; gap: 8px;
+    letter-spacing: 0.06em;
+  }
+  .badge .swatch { width: 10px; height: 10px; display: inline-block; }
+
+  /* confusion matrix */
+  .cm {
+    display: grid;
+    grid-template-columns: auto 1fr 1fr;
+    grid-template-rows: auto auto auto;
+    border: 1px solid var(--hair);
+    font-family: var(--f-mono);
+  }
+  .cm > div { padding: 22px 22px; border-right: 1px solid var(--hair); border-bottom: 1px solid var(--hair); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; }
+  .cm .corner { color: var(--muted); font-size: var(--type-tiny); }
+  .cm .col-head, .cm .row-head { color: var(--muted); font-size: var(--type-tiny); letter-spacing: 0.12em; text-transform: uppercase; }
+  .cm .cell .v { font-family: var(--f-serif); font-size: 64px; line-height: 1; color: var(--ink); letter-spacing: -0.02em; }
+  .cm .cell .p { font-size: var(--type-tiny); color: var(--muted); }
+  .cm .cell.correct { background: rgba(143, 184, 156, 0.10); }
+  .cm .cell.wrong   { background: rgba(216, 129, 89, 0.10); }
+
+  /* numbered list demo */
+  .demo-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 28px;
+  }
+  .demo-card {
+    border: 1px solid var(--hair);
+    background: var(--bg-card);
+    padding: 32px 36px;
+    display: flex; gap: 28px; align-items: flex-start;
+    min-height: 0;
+  }
+  .demo-card .idx {
+    font-family: var(--f-serif);
+    font-size: 96px;
+    line-height: 0.9;
+    color: var(--warm);
+    letter-spacing: -0.03em;
+    flex-shrink: 0;
+    min-width: 90px;
+  }
+  .demo-card .body-col { display: flex; flex-direction: column; gap: 10px; }
+  .demo-card .ttl {
+    font-family: var(--f-serif);
+    font-size: 38px;
+    line-height: 1.1;
+    letter-spacing: -0.01em;
+  }
+  .demo-card .desc { font-size: var(--type-small); color: var(--muted); line-height: 1.3; }
+  .demo-card .tag {
+    font-family: var(--f-mono);
+    font-size: var(--type-tiny);
+    color: var(--ink);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    border-top: 1px dashed var(--hair);
+    padding-top: 10px;
+    margin-top: 4px;
+  }
+
+  /* arrow flow for progression */
+  .progress-row {
+    display: grid;
+    grid-template-columns: 1fr 80px 1fr;
+    gap: 32px;
+    align-items: stretch;
+  }
+  .progress-arrow {
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--f-serif);
+    font-size: 64px;
+    color: var(--warm);
+  }
+  .prog-card {
+    border: 1px solid var(--hair);
+    padding: 30px 34px;
+    background: var(--bg-card);
+    display: flex; flex-direction: column; gap: 14px;
+  }
+  .prog-card.hl { background: var(--warm); color: #14140F; border-color: var(--warm); }
+  .prog-card.hl .small, .prog-card.hl .k, .prog-card.hl .h, .prog-card.hl .desc { color: inherit; }
+  .prog-card .lbl {
+    font-family: var(--f-mono); font-size: var(--type-tiny);
+    color: var(--muted); letter-spacing: 0.14em; text-transform: uppercase;
+  }
+  .prog-card.hl .lbl { color: rgba(20, 20, 15, 0.7); }
+  .prog-card .v {
+    font-family: var(--f-serif); font-size: 86px; line-height: 0.95;
+    letter-spacing: -0.02em;
+  }
+  .prog-card .v .pct { font-family: var(--f-mono); font-size: 36px; color: var(--muted); margin-left: 8px; }
+  .prog-card.hl .v .pct { color: rgba(20, 20, 15, 0.7); }
+  .prog-card .desc { font-size: var(--type-small); color: var(--ink-2); line-height: 1.3; }
+
+  /* closing — slightly different from main slides */
+  .closing { background: #0E0E0B; }
+  .closing .rule { background: var(--hair); }
+  .closing .card, .closing .demo-card, .closing .hp, .closing .pipe .step { background: #14140F; }
+
+  /* heat / confusion / arch sweep figure */
+  .donut-wrap { display: flex; align-items: center; gap: 36px; }
+  .donut { width: 280px; height: 280px; flex-shrink: 0; }
+  .legend-list { display: flex; flex-direction: column; gap: 14px; }
+  .legend-list .row { display: flex; align-items: center; gap: 14px; }
+  .legend-list .sw { width: 14px; height: 14px; }
+  .legend-list .name { font-family: var(--f-mono); font-size: var(--type-small); color: var(--ink); width: 130px; }
+  .legend-list .pct { font-family: var(--f-mono); font-size: var(--type-small); color: var(--muted); width: 84px; text-align: right; font-variant-numeric: tabular-nums; }
+  .legend-list .n { font-family: var(--f-mono); font-size: var(--type-tiny); color: var(--muted); }
+
+  /* hyperparam tile */
+  .hp-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+  }
+  .hp {
+    border: 1px solid var(--hair);
+    background: var(--bg-card);
+    padding: 24px 26px 26px;
+    display: flex; flex-direction: column;
+    gap: 14px;
+  }
+  .hp .k { font-family: var(--f-mono); font-size: var(--type-tiny); color: var(--muted); letter-spacing: 0.12em; text-transform: uppercase; }
+  .hp .opt { display: flex; justify-content: space-between; align-items: baseline; font-family: var(--f-mono); font-size: var(--type-small); }
+  .hp .opt .name { color: var(--ink-2); }
+  .hp .opt .v { color: var(--muted); font-variant-numeric: tabular-nums; }
+  .hp .opt.best .name { color: var(--warm); font-weight: 600; }
+  .hp .opt.best .v { color: var(--warm); font-weight: 600; }
+  .hp .opt.best::after {
+    content: "← BEST";
+    font-family: var(--f-mono);
+    font-size: 14px;
+    color: var(--warm);
+    letter-spacing: 0.1em;
+  }
+
+  /* takeaway strip */
+  .takeaway {
+    border-top: 1px solid var(--ink);
+    padding-top: 22px;
+    display: flex; align-items: baseline; gap: 24px;
+    font-family: var(--f-serif);
+    font-size: 32px;
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+  }
+  .takeaway .lbl {
+    font-family: var(--f-mono);
+    font-size: var(--type-tiny);
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--warm);
+    flex-shrink: 0;
+    align-self: flex-start;
+    padding-top: 10px;
+  }
+</style>
+</head>
+<body>
+
+<deck-stage width="1920" height="1080" no-rail>
+
+  <!-- =================== SLIDE 1 — COVER =================== -->
+  <section data-label="01 Cover" class="cover">
+    <div class="chrome-top">
+      <span>M.TECH&nbsp;·&nbsp;DISSERTATION&nbsp;·&nbsp;FINAL VIVA</span>
+      <span>BITS PILANI WILP&nbsp;·&nbsp;2025–2026</span>
+    </div>
+
+    <div class="frame">
+      <div style="margin-top: 80px;">
+        <div class="eyebrow">Final Presentation <span class="dot">●</span> May 2026</div>
+      </div>
+
+      <div style="margin-top: 64px;">
+        <h1 class="h-display" style="max-width: 1500px; font-size: 88px; line-height: 1.0;">
+          Road Quality Assessment<br/>
+          <span style="font-style: italic; color: var(--ink-2);">Using Computer Vision</span><br/>
+          <span style="font-style: italic; color: var(--ink-2);">and GPS-Based Mapping</span>
+        </h1>
+        <p class="h-sub" style="margin-top: 32px; max-width: 1200px; color: var(--ink-2);">
+          Crowdsourced, dashcam-based road quality assessment with
+          quality-aware route planning across 808 OSM segments in Kerala.
+        </p>
+      </div>
+
+      <div class="meta-grid" style="margin-top: auto;">
+        <div>
+          <div class="lbl">Student</div>
+          <div class="val">Anish A.<span class="sub">2024TM93051 · M.Tech Software Engg.</span></div>
+        </div>
+        <div>
+          <div class="lbl">Supervisor</div>
+          <div class="val">Dr. Kavya Manohar<span class="sub">Adalat AI</span></div>
+        </div>
+        <div>
+          <div class="lbl">Additional Examiner</div>
+          <div class="val">Mr. Ashik Salahudeen<span class="sub">Auxmoney GmbH</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="chrome-bot">
+      <span>01 / 10</span>
+      <span></span>
+    </div>
+  </section>
+
+
+  <!-- =================== SLIDE 2 — THE PROBLEM =================== -->
+  <section data-label="02 Problem">
+    <div class="chrome-top">
+      <span>02&nbsp;·&nbsp;The Problem</span>
+      <span>Road Quality Assessment</span>
+    </div>
+
+    <div class="frame">
+      <div class="title-row">
+        <div class="eyebrow">02 <span class="dot">●</span> The Problem</div>
+        <h2 class="h-title" style="max-width: 1500px;">
+          Navigation today optimises distance and time —<br/>
+          <span style="font-style: italic; color: var(--ink-2);">not</span> the quality of the road you actually drive on.
+        </h2>
+      </div>
+
+      <div class="grow" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 36px; align-content: start; margin-top: 24px;">
+        <div class="card">
+          <div class="k">01 · The Gap</div>
+          <div class="h">Maps ignore surface quality.</div>
+          <div class="b">Every major navigation system today optimises distance and ETA. Road comfort, vehicle wear, and surface safety are invisible.</div>
+        </div>
+
+        <div class="card">
+          <div class="k">02 · The Indian Context</div>
+          <div class="h">Western models do not transfer.</div>
+          <div class="b">High visual clutter, monsoon damage, varied surfaces (asphalt, concrete, gravel, dirt) — pothole detectors trained on Japan / US / EU datasets fail on Indian roads.</div>
+        </div>
+
+        <div class="card">
+          <div class="k">03 · The Data Gap</div>
+          <div class="h">Municipal surveys are manual &amp; infrequent.</div>
+          <div class="b">Surveys happen once or twice a year, are not published openly, and cannot inform driver-facing routing decisions in real time.</div>
+        </div>
+      </div>
+
+      <div class="takeaway" style="margin-top: 24px;">
+        <span class="lbl">Research<br/>Question</span>
+        <span>
+          Can dashcam footage and computer vision automatically classify road quality
+          at <span style="font-style: italic;">segment level</span>, map it to a navigable graph, and route drivers around the worst of it?
+        </span>
+      </div>
+    </div>
+
+    <div class="chrome-bot">
+      <span>02 / 10</span>
+      <span class="who">Anish A.&nbsp;·&nbsp;<strong>2024TM93051</strong></span>
+    </div>
+  </section>
+
+
+  <!-- =================== SLIDE 3 — PIPELINE =================== -->
+  <section data-label="03 Pipeline">
+    <div class="chrome-top">
+      <span>03&nbsp;·&nbsp;System Pipeline</span>
+      <span>Six stages · dashcam → routing</span>
+    </div>
+
+    <div class="frame">
+      <div class="title-row">
+        <div class="eyebrow">03 <span class="dot">●</span> End-to-End Pipeline</div>
+        <h2 class="h-title">From dashcam video to quality-aware routes.</h2>
+      </div>
+
+      <div class="pipe">
+        <div class="step">
+          <div class="n">01</div>
+          <div class="name">Dashcam<br/>Ingestion</div>
+          <div class="desc">1080p footage from Kerala roads; FFmpeg frame extraction @ 1 fps.</div>
+          <div class="stat">~34k frames<br/>per camera</div>
+          <div class="arrow">›</div>
+        </div>
+        <div class="step">
+          <div class="n">02</div>
+          <div class="name">OCR + GPS<br/>Filtering</div>
+          <div class="desc">Tesseract OCR on GPS overlays; static / night / out-of-bounds frames dropped.</div>
+          <div class="stat">~26k frames<br/>annotatable</div>
+          <div class="arrow">›</div>
+        </div>
+        <div class="step">
+          <div class="n">03</div>
+          <div class="name">Consensus<br/>Annotation</div>
+          <div class="desc">Gamified platform · 2-annotator agreement with 3rd-annotator tiebreaker.</div>
+          <div class="stat">3,216 imgs<br/>53 annotators</div>
+          <div class="arrow">›</div>
+        </div>
+        <div class="step">
+          <div class="n">04</div>
+          <div class="name">Model<br/>Training</div>
+          <div class="desc">Architecture sweep + 72-trial HPO. Swin-Small fine-tuned at lr=3e-5.</div>
+          <div class="stat">15 archs<br/>72 HPO trials</div>
+          <div class="arrow">›</div>
+        </div>
+        <div class="step">
+          <div class="n">05</div>
+          <div class="name">GPS<br/>Snapping</div>
+          <div class="desc">osmnx + UTM projection; nearest-edge within 35 m; per-edge aggregation.</div>
+          <div class="stat">808 OSM<br/>segments</div>
+          <div class="arrow">›</div>
+        </div>
+        <div class="step">
+          <div class="n">06</div>
+          <div class="name">Routing &amp;<br/>Map Server</div>
+          <div class="desc">Flask + Leaflet UI; shortest vs. smoothest path via quality-penalised Dijkstra.</div>
+          <div class="stat">REST API<br/>+ live map</div>
+        </div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 28px; margin-top: 60px;">
+        <div class="stat-big"><div class="v">3,216</div><div class="l">Consensus images</div></div>
+        <div class="stat-big"><div class="v">808</div><div class="l">OSM segments mapped</div></div>
+        <div class="stat-big"><div class="v">79.6<span style="font-family: var(--f-mono); font-size: 48px; color: var(--muted);">%</span></div><div class="l">Validation acc · 3-class</div></div>
+        <div class="stat-big"><div class="v">75<span style="font-family: var(--f-mono); font-size: 48px; color: var(--muted);">%</span></div><div class="l">Macro F1 · 3-class</div></div>
+      </div>
+    </div>
+
+    <div class="chrome-bot">
+      <span>03 / 10</span>
+      <span class="who">Anish A.&nbsp;·&nbsp;<strong>2024TM93051</strong></span>
+    </div>
+  </section>
+
+
+  <!-- =================== SLIDE 4 — DATASET & ANNOTATION =================== -->
+  <section data-label="04 Dataset">
+    <div class="chrome-top">
+      <span>04&nbsp;·&nbsp;Dataset &amp; Annotation</span>
+      <span>3,216 consensus-validated images</span>
+    </div>
+
+    <div class="frame">
+      <div class="title-row">
+        <div class="eyebrow">04 <span class="dot">●</span> Dataset &amp; Annotation</div>
+        <h2 class="h-title">A crowdsourced dataset built with consensus and active learning.</h2>
+      </div>
+
+      <div class="grow" style="display: grid; grid-template-columns: 1fr 1.05fr; gap: 56px; align-items: start;">
+
+        <!-- left: distribution -->
+        <div class="col gap-m">
+          <div class="eyebrow" style="font-size: var(--type-tiny);">Class Distribution &nbsp;·&nbsp; 3-class (production)</div>
+
+          <div class="donut-wrap">
+            <svg class="donut" viewBox="0 0 42 42" style="width: 260px; height: 260px;">
+              <circle cx="21" cy="21" r="15.915" fill="none" stroke="#2F2E27" stroke-width="9"/>
+              <circle cx="21" cy="21" r="15.915" fill="none" stroke="#8FB89C" stroke-width="9"
+                stroke-dasharray="73.9 26.1" stroke-dashoffset="25" />
+              <circle cx="21" cy="21" r="15.915" fill="none" stroke="#D88159" stroke-width="9"
+                stroke-dasharray="15.9 84.1" stroke-dashoffset="-48.9" />
+              <circle cx="21" cy="21" r="15.915" fill="none" stroke="#8E897B" stroke-width="9"
+                stroke-dasharray="10.2 89.8" stroke-dashoffset="-64.8" />
+              <text x="21" y="20.5" text-anchor="middle" font-family="Newsreader" font-size="6.5" fill="#F2EFE5">3,216</text>
+              <text x="21" y="25.5" text-anchor="middle" font-family="JetBrains Mono" font-size="2.6" fill="#8E897B">images</text>
+            </svg>
+
+            <div class="legend-list">
+              <div class="row"><span class="sw" style="background:#8FB89C"></span><span class="name">Good</span><span class="pct">73.9%</span><span class="n">2,376</span></div>
+              <div class="row"><span class="sw" style="background:#D88159"></span><span class="name">Bad</span><span class="pct">15.9%</span><span class="n">511</span></div>
+              <div class="row"><span class="sw" style="background:#8E897B"></span><span class="name">Invalid</span><span class="pct">10.2%</span><span class="n">329</span></div>
+            </div>
+          </div>
+
+          <div>
+            <div class="eyebrow" style="font-size: var(--type-tiny);">5-Class Breakdown (pre-merge)</div>
+            <div class="row" style="margin-top: 14px; gap: 6px; height: 38px;">
+              <div style="flex: 33.2; background: #6FA384; display: flex; align-items: center; justify-content: center; font-family: var(--f-mono); font-size: 24px; color: #0E0E0B;">33.2%</div>
+              <div style="flex: 40.6; background: #8FB89C; display: flex; align-items: center; justify-content: center; font-family: var(--f-mono); font-size: 24px; color: #0E0E0B;">40.6%</div>
+              <div style="flex: 12.4; background: #D4A65A; display: flex; align-items: center; justify-content: center; font-family: var(--f-mono); font-size: 24px; color: #0E0E0B;">12.4%</div>
+              <div style="flex: 3.5; background: #D88159;"></div>
+              <div style="flex: 10.2; background: #8E897B;"></div>
+            </div>
+            <div class="row" style="margin-top: 10px; gap: 24px; font-family: var(--f-mono); font-size: var(--type-tiny); color: var(--muted); flex-wrap: wrap;">
+              <span><span style="color: var(--ink);">Excellent</span> 1,069</span>
+              <span><span style="color: var(--ink);">Good</span> 1,307</span>
+              <span><span style="color: var(--ink);">Fair</span> 399</span>
+              <span><span style="color: var(--ink);">Poor</span> 112</span>
+              <span><span style="color: var(--ink);">Invalid</span> 329</span>
+            </div>
+            <p class="tiny" style="margin-top: 14px;"><span style="color: var(--ink);">Active learning</span> moved class ratio from 9.2:1 → 4.6:1 (Good:Bad).</p>
+          </div>
+        </div>
+
+        <!-- right: how -->
+        <div class="col gap-m">
+          <div class="card" style="padding: 24px 28px 26px;">
+            <div class="k">Annotation Protocol</div>
+            <div class="h" style="font-size: 32px;">Two annotators &nbsp;<span style="color: var(--muted); font-family: var(--f-mono); font-size: 26px;">→</span>&nbsp; agreement, or third tiebreaker.</div>
+            <div class="b" style="font-size: 24px;">Gamified platform with leaderboard and consensus-accuracy feedback kept contributors engaged across multiple weeks.</div>
+            <div class="row gap-m" style="margin-top: 8px;">
+              <div class="stat-big"><div class="v" style="font-size: 72px;">53</div><div class="l">Contributors</div></div>
+              <div class="stat-big"><div class="v" style="font-size: 72px;">3,216</div><div class="l">Confirmed labels</div></div>
+              <div class="stat-big"><div class="v" style="font-size: 72px;">4</div><div class="l">Dashcam sources</div></div>
+            </div>
+          </div>
+
+          <div class="card" style="padding: 24px 28px 26px;">
+            <div class="k">Active Learning Loop</div>
+            <div class="h" style="font-size: 32px;">Frames where <span class="mono" style="font-size: 28px; color: var(--warm);">max(softmax) &lt; 0.7</span> are pushed up the queue.</div>
+            <div class="b" style="font-size: 24px;">
+              Targets minority &amp; ambiguous samples. The Bad class grew from <span class="mono" style="color: var(--ink);">4.1% → 15.9%</span> across iterations — directly addressing imbalance. Group-aware train/val split on <span style="font-style: italic;">video identity</span> prevents near-duplicate leakage.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="chrome-bot">
+      <span>04 / 10</span>
+      <span class="who">Anish A.&nbsp;·&nbsp;<strong>2024TM93051</strong></span>
+    </div>
+  </section>
+
+
+  <!-- =================== SLIDE 5 — ARCH SWEEP =================== -->
+  <section data-label="05 Architectures">
+    <div class="chrome-top">
+      <span>05&nbsp;·&nbsp;Architecture Sweep</span>
+      <span>13 successful · Swin-Small wins</span>
+    </div>
+
+    <div class="frame">
+      <div class="title-row">
+        <div class="eyebrow">05 <span class="dot">●</span> Model Selection</div>
+        <h2 class="h-title">A 13-architecture sweep, ranked by macro F1.</h2>
+      </div>
+
+      <div class="grow" style="display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 56px; align-items: start;">
+
+        <div class="col gap-s">
+          <div class="eyebrow" style="font-size: var(--type-tiny);">5-class · fixed lr=1e-4 · weighted loss · ~1.6 h</div>
+          <table class="data" style="margin-top: 8px;">
+            <thead>
+              <tr><th style="width: 50px;">#</th><th>Architecture</th><th style="text-align:right">Params</th><th style="text-align:right">Acc</th><th style="text-align:right">Macro F1</th></tr>
+            </thead>
+            <tbody>
+              <tr class="hl"><td>01</td><td>swin_small ✓</td><td class="num-cell" style="text-align:right">50M</td><td class="num-cell" style="text-align:right">53.8%</td><td class="num-cell" style="text-align:right">47.0%</td></tr>
+              <tr><td>02</td><td>swin_tiny</td><td class="num-cell" style="text-align:right">28M</td><td class="num-cell" style="text-align:right">51.5%</td><td class="num-cell" style="text-align:right">46.1%</td></tr>
+              <tr><td>03</td><td>resnet34</td><td class="num-cell" style="text-align:right">21M</td><td class="num-cell" style="text-align:right">51.1%</td><td class="num-cell" style="text-align:right">45.4%</td></tr>
+              <tr><td>04</td><td>convnext_tiny</td><td class="num-cell" style="text-align:right">28M</td><td class="num-cell" style="text-align:right">50.4%</td><td class="num-cell" style="text-align:right">44.8%</td></tr>
+              <tr><td>05</td><td>resnet18</td><td class="num-cell" style="text-align:right">11M</td><td class="num-cell" style="text-align:right">49.7%</td><td class="num-cell" style="text-align:right">44.4%</td></tr>
+              <tr><td>06</td><td>vit_small</td><td class="num-cell" style="text-align:right">22M</td><td class="num-cell" style="text-align:right">49.8%</td><td class="num-cell" style="text-align:right">44.0%</td></tr>
+              <tr><td>07</td><td>efficientnet_b1</td><td class="num-cell" style="text-align:right">8M</td><td class="num-cell" style="text-align:right">49.4%</td><td class="num-cell" style="text-align:right">41.4%</td></tr>
+              <tr><td style="color: var(--muted);">8–13</td><td style="color: var(--muted);">efficientnet_b0/b2 · resnet50 · convnext_s/base · vit_base <span style="font-size: 24px;">(efficientnetv2_s/m failed)</span></td><td class="num-cell" style="text-align:right; color: var(--muted);">5–89M</td><td class="num-cell" style="text-align:right; color: var(--muted);">45–50%</td><td class="num-cell" style="text-align:right; color: var(--muted);">39–42%</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="col gap-m">
+          <div class="card">
+            <div class="k">Why Swin Wins</div>
+            <div class="h">Hierarchical, shifted-window attention fits road texture.</div>
+            <div class="b">Local 7×7 windows match pothole-scale features; shifted windows preserve cross-boundary context; multi-scale stages capture both crack-pattern texture and segment-level structure.</div>
+          </div>
+          <div class="card">
+            <div class="k">Why ViT Loses &nbsp;·&nbsp; Inverse Scaling</div>
+            <div class="h">Capacity-data mismatch &nbsp;<span class="mono" style="color: var(--warm); font-size: 28px;">97% train · 59% val</span></div>
+            <div class="b">Isotropic transformers memorise rather than learn on a 3k-image domain dataset. The same pattern repeats across families: ConvNeXt-Base (89M) ranked 13th vs. ConvNeXt-Tiny (28M) at 4th; ViT-Base (86M) at 11th vs. ViT-Small at 6th. Data-limited, not capacity-limited.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="chrome-bot">
+      <span>05 / 10</span>
+      <span class="who">Anish A.&nbsp;·&nbsp;<strong>2024TM93051</strong></span>
+    </div>
+  </section>
+
+
+  <!-- =================== SLIDE 6 — HPO =================== -->
+  <section data-label="06 Hyperparameters">
+    <div class="chrome-top">
+      <span>06&nbsp;·&nbsp;Hyperparameter Tuning</span>
+      <span>72 trials · ~14 hours</span>
+    </div>
+
+    <div class="frame">
+      <div class="title-row">
+        <div class="eyebrow">06 <span class="dot">●</span> Hyperparameter Tuning</div>
+        <h2 class="h-title">72 trials surfaced a counter-intuitive recipe.</h2>
+      </div>
+
+      <div class="hp-grid">
+        <div class="hp">
+          <div class="k">Learning Rate</div>
+          <div class="opt best"><span class="name">3e-5</span><span class="v">51.9%</span></div>
+          <div class="opt"><span class="name">1e-4</span><span class="v">51.7%</span></div>
+          <div class="opt"><span class="name">3e-4</span><span class="v">51.7%</span></div>
+        </div>
+        <div class="hp">
+          <div class="k">Backbone Freeze</div>
+          <div class="opt best"><span class="name">0 epochs</span><span class="v">52.1%</span></div>
+          <div class="opt"><span class="name">5 epochs</span><span class="v">51.7%</span></div>
+          <div class="opt"><span class="name">10 epochs</span><span class="v">51.4%</span></div>
+        </div>
+        <div class="hp">
+          <div class="k">Label Smoothing</div>
+          <div class="opt best"><span class="name">none</span><span class="v">51.9%</span></div>
+          <div class="opt"><span class="name">0.1</span><span class="v">51.6%</span></div>
+          <div class="opt" style="visibility:hidden"><span class="name">—</span><span class="v">—</span></div>
+        </div>
+        <div class="hp">
+          <div class="k">Class Weighting</div>
+          <div class="opt best"><span class="name">unweighted</span><span class="v">52.0%</span></div>
+          <div class="opt"><span class="name">weighted</span><span class="v">51.5%</span></div>
+          <div class="opt" style="visibility:hidden"><span class="name">—</span><span class="v">—</span></div>
+        </div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1.05fr 1fr; gap: 56px; margin-top: 36px; align-items: start;">
+        <div class="col gap-s">
+          <div class="eyebrow" style="font-size: var(--type-tiny);">Final Production Configuration</div>
+          <table class="data" style="margin-top: 8px;">
+            <tbody>
+              <tr><td style="width: 260px; color: var(--muted);">model</td><td style="color: var(--ink); font-weight: 600;">swin_small</td></tr>
+              <tr><td style="color: var(--muted);">learning rate · scheduler</td><td>3e-5 · CosineAnnealingLR</td></tr>
+              <tr><td style="color: var(--muted);">backbone freeze</td><td>none — full fine-tune</td></tr>
+              <tr><td style="color: var(--muted);">loss · smoothing</td><td>unweighted CE · 0.0</td></tr>
+              <tr><td style="color: var(--muted);">optimiser · batch · stop</td><td>Adam · 32 · val-loss patience 30</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="col gap-m">
+          <div class="card" style="padding: 22px 26px 24px;">
+            <div class="k">Surprise · 01 · Backbone freezing hurts</div>
+            <div class="b" style="font-size: 26px;">ImageNet → Indian dashcam is a wide domain gap. Early layers need to adapt. Two-phase training underperformed end-to-end fine-tuning at every duration.</div>
+          </div>
+          <div class="card" style="padding: 22px 26px 24px;">
+            <div class="k">Surprise · 02 · Smoothing &amp; weights add nothing</div>
+            <div class="b" style="font-size: 26px;">Swin already learns reasonably balanced representations at this scale. The bottleneck is the class boundaries themselves, not optimisation.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="chrome-bot">
+      <span>06 / 10</span>
+      <span class="who">Anish A.&nbsp;·&nbsp;<strong>2024TM93051</strong></span>
+    </div>
+  </section>
+
+
+  <!-- =================== SLIDE 7 — CLASS CONSOLIDATION =================== -->
+  <section data-label="07 Consolidation">
+    <div class="chrome-top">
+      <span>07&nbsp;·&nbsp;Class Consolidation</span>
+      <span>Data-driven 5 → 3</span>
+    </div>
+
+    <div class="frame">
+      <div class="title-row">
+        <div class="eyebrow">07 <span class="dot">●</span> The Class Consolidation Decision</div>
+        <h2 class="h-title">Five classes were the bottleneck — not the model.</h2>
+      </div>
+
+      <div class="grow col gap-m">
+        <p class="body" style="max-width: 1500px;">
+          Confusion matrices across all 13 successful architectures showed persistent confusion at the
+          <span class="mono" style="background: rgba(216,129,89,0.15); padding: 2px 8px;">Excellent ↔ Good</span> and
+          <span class="mono" style="background: rgba(216,129,89,0.15); padding: 2px 8px;">Fair ↔ Poor</span> boundaries.
+          Annotator-disagreement data corroborated this — humans split on those exact pairs. The ambiguity was real, not a modelling failure.
+        </p>
+
+        <div class="progress-row" style="margin-top: 12px;">
+          <div class="prog-card">
+            <div class="lbl">5-class · Excellent / Good / Fair / Poor / Invalid</div>
+            <div class="v">53.0<span class="pct">% acc</span></div>
+            <div class="v" style="font-size: 64px; color: var(--muted);">57.0<span class="pct">% macro F1</span></div>
+            <div class="desc">Production swin_small on the 5-class consensus dataset. Macro F1 was respectable but minority-class recall remained poor.</div>
+          </div>
+
+          <div class="progress-arrow">›</div>
+
+          <div class="prog-card hl">
+            <div class="lbl">3-class · Good / Bad / Invalid &nbsp;·&nbsp; ADOPTED</div>
+            <div class="v">79.6<span class="pct">% acc</span></div>
+            <div class="v" style="font-size: 64px;">75.0<span class="pct">% macro F1</span></div>
+            <div class="desc">Excellent + Good → Good; Fair + Poor → Bad. Directly answers the navigation question: <em>is this segment safe to drive?</em></div>
+          </div>
+        </div>
+
+        <div class="takeaway" style="margin-top: 8px;">
+          <span class="lbl">Insight</span>
+          <span style="font-size: 30px;">The biggest single performance gain came from <span style="font-style: italic;">listening to the data</span> — not from a deeper network or longer training. <span style="color: var(--muted); font-family: var(--f-mono); font-size: 24px;">53.0% → 79.6% acc &nbsp;·&nbsp; 57.0% → 75.0% macro F1.</span></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="chrome-bot">
+      <span>07 / 10</span>
+      <span class="who">Anish A.&nbsp;·&nbsp;<strong>2024TM93051</strong></span>
+    </div>
+  </section>
+
+
+  <!-- =================== SLIDE 8 — FINAL RESULTS =================== -->
+  <section data-label="08 Final Results">
+    <div class="chrome-top">
+      <span>08&nbsp;·&nbsp;Final Model Performance</span>
+      <span>swin_small · 3-class · 941 val samples</span>
+    </div>
+
+    <div class="frame">
+      <div class="title-row">
+        <div class="eyebrow">08 <span class="dot">●</span> Final Model Performance</div>
+        <h2 class="h-title">Strong on Good roads — conservative on Bad.</h2>
+      </div>
+
+      <div class="grow" style="display: grid; grid-template-columns: 1.05fr 1.1fr; gap: 64px; align-items: start;">
+
+        <!-- left: confusion matrix -->
+        <div class="col gap-m">
+          <div class="eyebrow" style="font-size: var(--type-tiny);">Confusion Matrix · 941 validation samples · Invalid excluded</div>
+          <div class="cm">
+            <div class="corner"></div>
+            <div class="col-head">Pred · Bad</div>
+            <div class="col-head" style="border-right: none;">Pred · Good</div>
+
+            <div class="row-head">True<br/>Bad</div>
+            <div class="cell correct">
+              <div class="v">182</div>
+              <div class="p">true negative · 53%</div>
+            </div>
+            <div class="cell wrong" style="border-right: none;">
+              <div class="v" style="color: var(--warm);">160</div>
+              <div class="p">false positive · 47%</div>
+            </div>
+
+            <div class="row-head" style="border-bottom: none;">True<br/>Good</div>
+            <div class="cell wrong" style="border-bottom: none;">
+              <div class="v" style="color: var(--warm);">38</div>
+              <div class="p">false negative · 6%</div>
+            </div>
+            <div class="cell correct" style="border-right: none; border-bottom: none;">
+              <div class="v">561</div>
+              <div class="p">true positive · 94%</div>
+            </div>
+          </div>
+
+          <p class="small" style="margin-top: 8px;">
+            <strong style="color: var(--warm);">Pessimistic edge aggregation</strong> at the segment level partially mitigates the 47% Bad miss-rate — a segment is only labelled Good if all observations agree.
+          </p>
+        </div>
+
+        <!-- right: per-class -->
+        <div class="col gap-m">
+          <div class="eyebrow" style="font-size: var(--type-tiny);">Per-Class Classification Report</div>
+
+          <table class="data">
+            <thead>
+              <tr><th>Class</th><th style="text-align:right">Precision</th><th style="text-align:right">Recall</th><th style="text-align:right">F1</th><th style="text-align:right">Support</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Bad</td><td class="num-cell" style="text-align:right">83%</td><td class="num-cell" style="text-align:right; color: var(--warm); font-weight: 600;">53%</td><td class="num-cell" style="text-align:right">65%</td><td class="num-cell" style="text-align:right">342</td></tr>
+              <tr><td>Good</td><td class="num-cell" style="text-align:right">78%</td><td class="num-cell" style="text-align:right">94%</td><td class="num-cell" style="text-align:right">85%</td><td class="num-cell" style="text-align:right">599</td></tr>
+              <tr class="hl"><td>Macro avg</td><td class="num-cell" style="text-align:right">80%</td><td class="num-cell" style="text-align:right">73%</td><td class="num-cell" style="text-align:right">75%</td><td class="num-cell" style="text-align:right">941</td></tr>
+            </tbody>
+          </table>
+
+          <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin-top: 14px;">
+            <div class="stat-big"><div class="v" style="font-size: 80px;">79.6<span class="mono" style="font-size: 30px; color: var(--muted);">%</span></div><div class="l">Overall accuracy</div></div>
+            <div class="stat-big"><div class="v" style="font-size: 80px;">75<span class="mono" style="font-size: 30px; color: var(--muted);">%</span></div><div class="l">Macro F1</div></div>
+            <div class="stat-big"><div class="v" style="font-size: 80px;">808</div><div class="l">OSM segments mapped</div></div>
+          </div>
+
+          <div class="card" style="margin-top: 6px; padding: 22px 26px 24px;">
+            <div class="k">Known Limitation</div>
+            <div class="h" style="font-size: 30px;">53% recall on Bad — the model is conservative.</div>
+            <div class="b" style="font-size: 24px;">Residual imbalance &amp; visual ambiguity at driving speed. Mitigated at segment level via pessimistic edge aggregation in routing.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="chrome-bot">
+      <span>08 / 10</span>
+      <span class="who">Anish A.&nbsp;·&nbsp;<strong>2024TM93051</strong></span>
+    </div>
+  </section>
+
+
+  <!-- =================== SLIDE 9 — DEMO =================== -->
+  <section data-label="09 Demo">
+    <div class="chrome-top">
+      <span>09&nbsp;·&nbsp;Live Demonstration</span>
+      <span>Four-part walkthrough</span>
+    </div>
+
+    <div class="frame">
+      <div class="title-row">
+        <div class="eyebrow">09 <span class="dot">●</span> Live Demonstration</div>
+        <h2 class="h-title">From annotation through to navigation — end to end.</h2>
+      </div>
+
+      <div class="grow demo-grid">
+        <div class="demo-card">
+          <div class="idx">01</div>
+          <div class="body-col">
+            <div class="ttl">Annotation Platform</div>
+            <div class="tag">flask · jinja · 53 contributors · 3,216 confirmed labels</div>
+          </div>
+        </div>
+
+        <div class="demo-card">
+          <div class="idx">02</div>
+          <div class="body-col">
+            <div class="ttl">Road Quality Maps</div>
+            <div class="tag">folium · osmnx · 808 segments · 35 m snapping</div>
+          </div>
+        </div>
+
+        <div class="demo-card">
+          <div class="idx">03</div>
+          <div class="body-col">
+            <div class="ttl">Quality-Aware Route Planning</div>
+            <div class="tag">dijkstra · pessimistic / majority modes · unrated = 2.5×1.2</div>
+          </div>
+        </div>
+
+        <div class="demo-card">
+          <div class="idx">04</div>
+          <div class="body-col">
+            <div class="ttl">Navigation Server</div>
+            <div class="tag">flask · leaflet.js · REST + GeoJSON · port 5050</div>
+          </div>
+        </div>
+
+        <a class="demo-card" href="https://roads.anishsheela.com/" target="_blank" style="grid-column: 1 / -1; text-decoration: none; color: inherit; align-items: center;">
+          <div class="idx">05</div>
+          <div class="body-col" style="flex: 1;">
+            <div class="ttl" style="display: flex; align-items: baseline; gap: 18px; flex-wrap: wrap;">
+              <span>Project Home</span>
+              <span style="font-family: var(--f-mono); font-size: 32px; color: var(--ink-2);">roads.anishsheela.com &nbsp;<span style="font-family: var(--f-sans);">↗</span></span>
+            </div>
+            <div class="tag" style="color: var(--ink-2); text-transform: none; letter-spacing: 0; font-family: var(--f-sans); font-size: 24px;">Reports · source code · live demos · maps · slides · dataset notes</div>
+          </div>
+        </a>
+      </div>
+    </div>
+
+    <div class="chrome-bot">
+      <span>09 / 10</span>
+      <span class="who">Anish A.&nbsp;·&nbsp;<strong>2024TM93051</strong></span>
+    </div>
+  </section>
+
+
+  <!-- =================== SLIDE 10 — CLOSING / FUTURE WORK =================== -->
+  <section data-label="10 Conclusion" class="closing">
+    <div class="chrome-top">
+      <span>10&nbsp;·&nbsp;Conclusion &amp; Future Work</span>
+      <span>Thank you</span>
+    </div>
+
+    <div class="frame" style="--gap-title: 28px;">
+      <div class="title-row" style="margin-top: 14px;">
+        <div class="eyebrow">10 <span class="dot">●</span> Conclusion &amp; Future Work</div>
+        <h2 class="h-title" style="max-width: 1500px; font-size: 54px;">
+          A complete, deployable pipeline —<br/>
+          <span style="font-style: italic; color: var(--ink-2);">dashcam to driver, in one system.</span>
+        </h2>
+      </div>
+
+      <a href="https://roads.anishsheela.com/" target="_blank" style="display: flex; align-items: center; justify-content: space-between; gap: 24px; padding: 12px 24px; border: 1px solid var(--warm); background: rgba(216,129,89,0.08); text-decoration: none; margin-bottom: 14px;">
+        <div style="display: flex; align-items: baseline; gap: 18px;">
+          <div style="font-family: var(--f-mono); font-size: var(--type-tiny); color: var(--warm); letter-spacing: 0.16em; text-transform: uppercase;">Project Home</div>
+          <div style="font-family: var(--f-mono); font-size: 28px; color: var(--ink); letter-spacing: -0.005em;">roads.anishsheela.com</div>
+        </div>
+        <div style="font-family: var(--f-sans); font-size: 24px; color: var(--ink-2);">Reports · source · live demos · maps · slides &nbsp;<span style="color: var(--warm);">↗</span></div>
+      </a>
+
+      <div style="display: grid; grid-template-columns: 1.1fr 1fr; gap: 56px; align-items: start;">
+        <div class="col" style="gap: 14px;">
+          <div class="eyebrow" style="font-size: var(--type-tiny);">Contributions</div>
+          <div>
+            <div style="font-family: var(--f-serif); font-size: 28px; line-height: 1.1;">Empirical case for classification over detection.</div>
+            <p class="small" style="color: var(--ink-2); margin-top: 4px; font-size: 24px; line-height: 1.3;">17 YOLO variants benchmarked; best mAP50 of 20.3%.</p>
+          </div>
+          <div class="rule"></div>
+          <div>
+            <div style="font-family: var(--f-serif); font-size: 28px; line-height: 1.1;">Consensus-annotation methodology.</div>
+            <p class="small" style="color: var(--ink-2); margin-top: 4px; font-size: 24px; line-height: 1.3;">3,216 labels across 53 contributors · gamified + active learning.</p>
+          </div>
+          <div class="rule"></div>
+          <div>
+            <div style="font-family: var(--f-serif); font-size: 28px; line-height: 1.1;">Data-driven class consolidation.</div>
+            <p class="small" style="color: var(--ink-2); margin-top: 4px; font-size: 24px; line-height: 1.3;">5 → 3 merge drove val accuracy 53% → 79.6%.</p>
+          </div>
+          <div class="rule"></div>
+          <div>
+            <div style="font-family: var(--f-serif); font-size: 28px; line-height: 1.1;">End-to-end geospatial integration.</div>
+            <p class="small" style="color: var(--ink-2); margin-top: 4px; font-size: 24px; line-height: 1.3;">UTM snapping, dual aggregation, Flask + Leaflet nav server.</p>
+          </div>
+        </div>
+
+        <div class="col" style="gap: 12px;">
+          <div class="eyebrow" style="font-size: var(--type-tiny);">Future Work</div>
+          <div style="border: 1px solid var(--warm); padding: 12px 22px 14px; display: flex; flex-direction: column; gap: 4px; background: rgba(216,129,89,0.08);">
+            <div style="font-family: var(--f-mono); font-size: var(--type-tiny); color: var(--warm); letter-spacing: 0.14em; text-transform: uppercase;">01 · Open Release</div>
+            <div style="font-family: var(--f-serif); font-size: 28px; line-height: 1.1;">Anonymise &amp; release dataset and models</div>
+            <div class="small" style="color: var(--ink-2); font-size: 24px; line-height: 1.3;">PII-stripped frames + trained weights for the research community.</div>
+          </div>
+          <div style="border: 1px solid var(--hair); padding: 12px 22px 14px; display: flex; flex-direction: column; gap: 4px; background: var(--bg-card);">
+            <div style="font-family: var(--f-mono); font-size: var(--type-tiny); color: var(--muted); letter-spacing: 0.14em; text-transform: uppercase;">02 · Deployment</div>
+            <div style="font-family: var(--f-serif); font-size: 28px; line-height: 1.1;">Mobile navigation application</div>
+            <div class="small" style="color: var(--ink-2); font-size: 24px; line-height: 1.3;">Phone-first routing app for in-field driver use.</div>
+          </div>
+          <div style="border: 1px solid var(--hair); padding: 12px 22px 14px; display: flex; flex-direction: column; gap: 4px; background: var(--bg-card);">
+            <div style="font-family: var(--f-mono); font-size: var(--type-tiny); color: var(--muted); letter-spacing: 0.14em; text-transform: uppercase;">03 · Coverage</div>
+            <div style="font-family: var(--f-serif); font-size: 28px; line-height: 1.1;">Expanded fleet &amp; beyond Kerala</div>
+            <div class="small" style="color: var(--ink-2); font-size: 24px; line-height: 1.3;">More cameras, post-monsoon seasons, other Indian states.</div>
+          </div>
+        </div>
+      </div>
+
+      <div style="margin-top: auto; padding-top: 14px;">
+        <div class="rule"></div>
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 60px; padding-top: 12px;">
+          <div>
+            <div style="font-family: var(--f-mono); font-size: var(--type-tiny); color: var(--muted); letter-spacing: 0.18em; text-transform: uppercase; margin-bottom: 6px;">Student</div>
+            <div style="font-family: var(--f-serif); font-size: 28px; color: var(--ink); line-height: 1.15;">Anish A.<span style="display: block; font-family: var(--f-sans); font-size: 24px; color: var(--muted); margin-top: 2px;">2024TM93051 · M.Tech Software Engg.</span></div>
+          </div>
+          <div>
+            <div style="font-family: var(--f-mono); font-size: var(--type-tiny); color: var(--muted); letter-spacing: 0.18em; text-transform: uppercase; margin-bottom: 6px;">Supervisor</div>
+            <div style="font-family: var(--f-serif); font-size: 28px; color: var(--ink); line-height: 1.15;">Dr. Kavya Manohar<span style="display: block; font-family: var(--f-sans); font-size: 24px; color: var(--muted); margin-top: 2px;">Adalat AI</span></div>
+          </div>
+          <div>
+            <div style="font-family: var(--f-mono); font-size: var(--type-tiny); color: var(--muted); letter-spacing: 0.18em; text-transform: uppercase; margin-bottom: 6px;">Additional Examiner</div>
+            <div style="font-family: var(--f-serif); font-size: 28px; color: var(--ink); line-height: 1.15;">Mr. Ashik Salahudeen<span style="display: block; font-family: var(--f-sans); font-size: 24px; color: var(--muted); margin-top: 2px;">Auxmoney GmbH</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="chrome-bot">
+      <span>10 / 10</span>
+      <span><strong style="color: var(--ink);">Thank&nbsp;you.</strong></span>
+    </div>
+  </section>
+
+</deck-stage>
+
+<script src="deck-stage.js"></script>
+</body>
+</html>
