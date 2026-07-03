@@ -1,0 +1,43 @@
+name: Deploy landing page
+
+# Deploys landing_page/ to the NixOS box that serves roads.anishsheela.com
+# (nginx static root /var/www/roads.anishsheela.com). Runs on every push to
+# main that touches landing_page/, and can be triggered manually.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'landing_page/**'
+      - '.github/workflows/deploy-landing-page.yml'
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-roads
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure SSH
+        run: |
+          mkdir -p ~/.ssh
+          printf '%s\n' "${{ secrets.ROADS_DEPLOY_KEY }}" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          ssh-keyscan -H roads.anishsheela.com >> ~/.ssh/known_hosts 2>/dev/null
+
+      - name: Deploy landing_page → roads.anishsheela.com
+        run: |
+          rsync -avz --delete \
+            --chmod=D755,F644 \
+            --exclude='.git' \
+            --exclude='.gitignore' \
+            --exclude='.claude' \
+            --exclude='.DS_Store' \
+            --exclude='deploy.sh' \
+            -e "ssh -i ~/.ssh/deploy_key -o IdentitiesOnly=yes" \
+            landing_page/ \
+            anish@roads.anishsheela.com:/var/www/roads.anishsheela.com/
