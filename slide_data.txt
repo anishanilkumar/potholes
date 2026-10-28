@@ -1,0 +1,151 @@
+================================================================
+ROAD QUALITY CLASSIFIER — SLIDE DATA SUMMARY
+================================================================
+
+
+----------------------------------------------------------------
+1. MODEL ARCHITECTURE SWEEP
+   (15 models, fixed lr=1e-4, weighted loss, 5-class, patience=10)
+   Total time: 1.6 hours
+----------------------------------------------------------------
+
+Rank  Model                              Accuracy    F1    Precision  Recall
+----  ---------------------------------  --------  ------  ---------  ------
+  1   swin_small_patch4_window7_224        53.8%   47.0%    46.4%     48.4%
+  2   swin_tiny_patch4_window7_224         51.5%   46.1%    45.9%     50.6%
+  3   resnet34                             51.1%   45.4%    47.7%     48.2%
+  4   convnext_tiny                        50.4%   44.8%    47.1%     52.9%
+  5   resnet18                             49.7%   44.4%    46.3%     49.3%
+  6   vit_small_patch16_224                49.8%   44.0%    45.0%     45.4%
+  7   efficientnet_b1                      49.4%   41.4%    43.0%     45.4%
+  8   efficientnet_b2                      49.8%   41.3%    41.9%     41.7%
+  9   resnet50                             48.2%   41.2%    42.6%     46.9%
+ 10   convnext_small                       49.7%   40.5%    49.6%     41.5%
+ 11   vit_base_patch16_224                 49.7%   40.4%    43.3%     41.7%
+ 12   efficientnet_b0                      45.4%   39.5%    39.3%     41.2%
+ 13   convnext_base                        48.9%   39.5%    44.3%     39.2%
+  -   efficientnetv2_s                    FAILED
+  -   efficientnetv2_m                    FAILED
+
+→ Winner: swin_small_patch4_window7_224 selected for hyperparameter tuning
+
+
+----------------------------------------------------------------
+2. HYPERPARAMETER TUNING
+   (swin_small + swin_tiny, 72 trials, 5-class, ~14 hours)
+----------------------------------------------------------------
+
+Parameters searched:
+  Learning rate    : 3e-4, 1e-4, 3e-5
+  Freeze epochs    : 0, 5, 10
+  Label smoothing  : 0.0, 0.1
+  Class weights    : weighted, unweighted
+  Scheduler        : cosine
+
+Average F1 by parameter value:
+  Learning rate:
+    3e-5   → 51.9%  ← best
+    1e-4   → 51.7%
+    3e-4   → 51.7%
+
+  Freeze epochs:
+    0      → 52.1%  ← best (no freezing)
+    5      → 51.7%
+    10     → 51.4%
+
+  Label smoothing:
+    0.0    → 51.9%  ← best (no smoothing)
+    0.1    → 51.6%
+
+  Class weights:
+    Unweighted → 52.0%  ← best
+    Weighted   → 51.5%
+
+  Architecture:
+    swin_small → 52.4%  ← best
+    swin_tiny  → 51.1%
+
+Top 5 trials:
+  1. swin_small | lr=3e-5  | freeze=0 | smooth=0.0 | unweighted | acc=53.2% | f1=56.8%
+  2. swin_small | lr=3e-4  | freeze=5 | smooth=0.0 | unweighted | acc=52.3% | f1=56.7%
+  3. swin_small | lr=1e-4  | freeze=0 | smooth=0.1 | unweighted | acc=52.9% | f1=55.9%
+  4. swin_small | lr=1e-4  | freeze=0 | smooth=0.1 | weighted   | acc=51.6% | f1=55.8%
+  5. swin_tiny  | lr=3e-4  | freeze=5 | smooth=0.0 | unweighted | acc=51.4% | f1=55.8%
+
+Optimal configuration:
+  Model           : swin_small_patch4_window7_224
+  Learning rate   : 3e-5
+  Freeze epochs   : 0 (no freezing — fine-tune all layers)
+  Label smoothing : 0.0 (none)
+  Class weights   : Unweighted
+  Scheduler       : Cosine annealing
+
+
+----------------------------------------------------------------
+3. PERFORMANCE PROGRESSION
+----------------------------------------------------------------
+
+Stage                              Accuracy     F1
+---------------------------------  --------   ------
+Model sweep best (5-class)           53.8%    47.0%
+After hyperparameter tuning (5-class) 53.2%   56.8%
+Production training (5-class)         53.0%   57.0%
+Production training (3-class merged)  81.1%   77.0%
+
+Note: 3-class merges Excellent+Good→Good, Fair+Poor→Bad, keeps Invalid
+
+
+----------------------------------------------------------------
+4. FINAL MODEL — 3-CLASS
+   (Bad / Good / Invalid)
+----------------------------------------------------------------
+
+Validation Accuracy : 81.1%
+Macro F1            : 77.0%
+Architecture        : swin_small_patch4_window7_224
+Learning rate       : 3e-5
+Epochs              : early stopped (patience=10)
+Classes             : Bad, Good, Invalid
+
+
+----------------------------------------------------------------
+5. MAPPING PIPELINE
+----------------------------------------------------------------
+
+Stack:
+  Road network      : OpenStreetMap (via osmnx)
+  GPS snapping      : osmnx nearest_edges (UTM projection)
+  Spatial data      : GeoPackage (.gpkg) via geopandas
+  Map rendering     : Folium (Python) / Leaflet.js (browser)
+  Base tiles        : CartoDB Positron
+
+Aggregation modes:
+  Pessimistic       : worst label observed on a segment wins
+  Majority vote     : most common label wins (ties → worst)
+
+Pipeline steps:
+  1. OCR (pytesseract)       → GPS + speed from dashcam overlay
+  2. process_frames.py       → filter idle/anomaly, copy frames
+  3. classify_dataset.py     → run classifier on filtered frames
+  4. snap_to_roads.py        → snap GPS points to OSM edges
+  5. render_map.py           → interactive HTML map
+
+Dataset coverage:
+  Cameras           : 4
+  Raw frames (OCR)  : ~34,000 per camera
+  After filtering   : ~26,000 per camera
+  Road segments mapped (3-class) : 808
+
+
+----------------------------------------------------------------
+6. KEY FINDINGS FROM TUNING
+----------------------------------------------------------------
+
+- Swin Transformer (small) was the clear winner across all phases
+- Lower learning rate (3e-5) works best — Swin is LR-sensitive
+- Freezing backbone layers hurts performance on this dataset
+- Label smoothing and class weighting gave no benefit
+- Biggest accuracy gain: class merging 5→3 classes (+28% accuracy)
+- 5-class model kept for presentation comparison (53% acc, 57% F1)
+
+================================================================
